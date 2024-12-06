@@ -1,0 +1,1 @@
+// File ini berisi penanganan error secara umum dan terjadi di sisi klien
