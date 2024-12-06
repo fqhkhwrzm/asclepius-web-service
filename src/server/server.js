@@ -4,6 +4,7 @@ require('dotenv').config(); // untuk mengambil environment variable
 const loadModel = require('../services/loadModel');
 const Hapi = require('@hapi/hapi');
 const routes = require('../server/routes');
+const InputError = require('../exceptions/InputError');
 
 (async () => {
     const server = Hapi.server({
