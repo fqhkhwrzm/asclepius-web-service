@@ -1,4 +1,7 @@
 // File ini bertanggung jawab untuk memuat kode, membuat konfigurasi, serta menjalankan HTTP server menggunakan Hapi
+require('dotenv').config(); // untuk mengambil environment variable
+
+const loadModel = require('../services/loadModel');
 const Hapi = require('@hapi/hapi');
 const routes = require('../server/routes');
 
@@ -13,6 +16,15 @@ const routes = require('../server/routes');
             },
         },
     })
+
+    // untuk menjalankan fungsi loadModel dan menyimpannya pada variabel model
+    const model = await loadModel();
+    // server.app untuk menyimpan hasil load model ke aplikasi
+    /*
+        kita menggunakan server.app.model untuk menyimpan hasil load model sehingga server hanya perlu 
+        melakukan load model ke Cloud Storage bucket sekali dan menyimpan hasilnya pada properti tersebut.
+    */
+    server.app.model = model;
 
     server.route(routes);
 
@@ -31,15 +43,15 @@ const routes = require('../server/routes');
    server.ext('onPreResponse', function (request, h) {
         const response = request.response;
 
-        if (response instanceof InputError) {
-            // InputError ini berasal dari file InputError.js
-            const newResponse = h.response({
-                status: fail,
-                message: `${response.message} Silakan gunakan foto lain.`
-            })
-            newResponse.code(response.statusCode)
-            return newResponse;
-        }
+        // if (response instanceof InputError) {
+        //     // InputError ini berasal dari file InputError.js
+        //     const newResponse = h.response({
+        //         status: fail,
+        //         message: `${response.message} Silakan gunakan foto lain.`
+        //     })
+        //     newResponse.code(response.statusCode)
+        //     return newResponse;
+        // }
 
         // Penanganan kedua adalah jika terjadi kesalahan atau error server
         if (response.isBoom) {

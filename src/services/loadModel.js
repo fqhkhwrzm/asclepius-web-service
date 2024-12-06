@@ -1,4 +1,4 @@
-const tf = requiire('@tensorflow/tfjs-node');
+const tf = require('@tensorflow/tfjs-node');
 
 async function loadModel() {
     // .loadGraphModel() untuk melakukan load model yang diambil dari environment variabel

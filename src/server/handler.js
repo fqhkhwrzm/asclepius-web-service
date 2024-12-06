@@ -6,18 +6,18 @@
      extension ini untuk menangani jika terjadi response error. 
 */
 async function postPredictHandler(request, h) {
-    validateNotePayload(request.payload);
-    const { title = 'untitiled', tags, body } = request.payload;
-    const noteId = await addNote({ title, tags, body });
-    const response = h.response({
-        status: 'success',
-        message: 'Catatan berhasil ditambahkan',
-        data: {
-            noteId,
-        }
-    });
-    response.code(201);
-    return response;
+    // validateNotePayload(request.payload);
+    // const { title = 'untitiled', tags, body } = request.payload;
+    // const noteId = await addNote({ title, tags, body });
+    // const response = h.response({
+    //     status: 'success',
+    //     message: 'Catatan berhasil ditambahkan',
+    //     data: {
+    //         noteId,
+    //     }
+    // });
+    // response.code(201);
+    // return response;
 };
 
 module.exports = postPredictHandler;
