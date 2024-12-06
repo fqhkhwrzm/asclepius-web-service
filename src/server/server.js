@@ -43,20 +43,20 @@ const routes = require('../server/routes');
    server.ext('onPreResponse', function (request, h) {
         const response = request.response;
 
-        // if (response instanceof InputError) {
-        //     // InputError ini berasal dari file InputError.js
-        //     const newResponse = h.response({
-        //         status: fail,
-        //         message: `${response.message} Silakan gunakan foto lain.`
-        //     })
-        //     newResponse.code(response.statusCode)
-        //     return newResponse;
-        // }
+        if (response instanceof InputError) {
+            // InputError ini berasal dari file InputError.js
+            const newResponse = h.response({
+                status: 'fail',
+                message: `${response.message} Silakan gunakan foto lain.`
+            })
+            newResponse.code(response.statusCode)
+            return newResponse;
+        }
 
         // Penanganan kedua adalah jika terjadi kesalahan atau error server
         if (response.isBoom) {
             const newResponse = h.response({
-                status: fail,
+                status: 'fail',
                 message: response.message
             })
             newResponse.code(response.statusCode)
