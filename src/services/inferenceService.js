@@ -17,7 +17,8 @@ async function predictClassification(model, image) {
         // Setelah tensor didapat, gunakan tensor untuk mendapatkan prediksi, score, dan confidenceScore
  
         //  urutan kelas ini tidak boleh tertukar, diakses dengan indeks
-        const classes = ['Melanocytic nevus', 'Squamous cell carcinoma', 'Vascular lesion'];
+        const classes = ['Cancer', 'Non-cancer'];
+        const suggestionArr = ['Segera periksa ke dokter!', 'Penyakit kanker tidak terdeteksi.'];
  
         const prediction = model.predict(tensor); // menampung hasil prediksi berdasarkan data baru berupa tensor (gambar yang sudah diproses sebelumnya)
         const score = await prediction.data(); // untuk mendapatkan seluruh skor yang didapatkan
@@ -30,34 +31,26 @@ async function predictClassification(model, image) {
         */
         const confidenceScore = Math.max(...score) * 100; // untuk mendapatkan skor tertinggi dari prediksi sebelumnya
  
-        const classResult = tf.argMax(prediction, 1).dataSync()[0];
-        // tf.argMax(prediction, 1) untuk menghitung indeks dengan nilai maksimum untuk setiap baris dari tensor
-        // .dataSync() untuk mengambil data dari tensor, output dari metode ini adalah array yang berurutan dari terbesar hingga terkecil.
-        // [0] untuk mengambil elemen pertama dari array tersebut (nilai terbesar)
-        const label = classes[classResult];
+        // const classResult = tf.argMax(prediction, 1).dataSync()[0];
+        // // tf.argMax(prediction, 1) untuk menghitung indeks dengan nilai maksimum untuk setiap baris dari tensor
+        // // .dataSync() untuk mengambil data dari tensor, output dari metode ini adalah array yang berurutan dari terbesar hingga terkecil.
+        // // [0] untuk mengambil elemen pertama dari array tersebut (nilai terbesar)
+        const label = confidenceScore > 99 ? classes[0] : classes[1];
+
+        let suggestion;
  
-        let explanation, suggestion;
- 
-        if(label === 'Melanocytic nevus') {
-            explanation = "Melanocytic nevus adalah kondisi di mana permukaan kulit memiliki bercak warna yang berasal dari sel-sel melanosit, yakni pembentukan warna kulit dan rambut."
-            suggestion = "Segera konsultasi dengan dokter terdekat jika ukuran semakin membesar dengan cepat, mudah luka atau berdarah."
+        if(label === classes[0]) {
+            suggestion = suggestionArr[0];
         }
  
-        if(label === 'Squamous cell carcinoma') {
-            explanation = "Squamous cell carcinoma adalah jenis kanker kulit yang umum dijumpai. Penyakit ini sering tumbuh pada bagian-bagian tubuh yang sering terkena sinar UV."
-            suggestion = "Segera konsultasi dengan dokter terdekat untuk meminimalisasi penyebaran kanker."
+        if(label === classes[1]) {
+            suggestion = suggestionArr[1];
         }
  
-        if(label === 'Vascular lesion') {
-            explanation = "Vascular lesion adalah penyakit yang dikategorikan sebagai kanker atau tumor di mana penyakit ini sering muncul pada bagian kepala dan leher."
-            suggestion = "Segera konsultasi dengan dokter terdekat untuk mengetahui detail terkait tingkat bahaya penyakit."
-        
-        }
- 
-        return { confidenceScore, label, explanation, suggestion };
+        return { confidenceScore, label, suggestion };
     } catch (error) {
         // memberikan pesan `Terjadi kesalahan input: ${error.message}` jika program menangkap terjadinya kesalahan.
-        throw new InputError(`Terjadi kesalahan input: ${error.message}`)
+        throw new InputError('Terjadi kesalahan dalam melakukan prediksi');
     }
 }
  

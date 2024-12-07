@@ -1,5 +1,6 @@
 // File ini bertanggung jawab menangani seluruh request dan response yang masuk, seluruh fungsi atau logika aplikasi akan disimpan pada folder services
 const predictClassification = require("../services/inferenceService");
+const storeData = require('../services/storeData');
 const crypto = require('crypto');
 
 /* 
@@ -14,7 +15,7 @@ async function postPredictHandler(request, h) {
     const { model } = request.server.app;
 
     // menjalankan fungsi predictClassification yang sebelumnya telah dibuat
-    const { confidenceScore, label, explanation, suggestion } = await predictClassification(model, image);
+    const { label, suggestion } = await predictClassification(model, image);
 
     const id = crypto.randomUUID();
     const createdAt = new Date().toISOString();
@@ -23,9 +24,7 @@ async function postPredictHandler(request, h) {
     const data = {
         "id": id,
         "result": label,
-        "explanation": explanation,
         "suggestion": suggestion,
-        "confidenceScore": confidenceScore,
         "createdAt": createdAt
     }
 
@@ -33,9 +32,9 @@ async function postPredictHandler(request, h) {
 
     const response = h.response({
         status: 'success',
-        message: confidenceScore > 99 ? 'Model is predicted successfully.' : 'Model is predicted successfully but under threshold. Please use the correct picture',
+        message: 'Model is predicted successfully',
         data
-    })
+    });
     response.code(201);
     return response;
 };

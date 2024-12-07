@@ -1,8 +1,8 @@
 // File ini bertanggung jawab untuk memuat kode, membuat konfigurasi, serta menjalankan HTTP server menggunakan Hapi
 require('dotenv').config(); // untuk mengambil environment variable
 
-const loadModel = require('../services/loadModel');
 const Hapi = require('@hapi/hapi');
+const loadModel = require('../services/loadModel');
 const routes = require('../server/routes');
 const InputError = require('../exceptions/InputError');
 
@@ -44,11 +44,12 @@ const InputError = require('../exceptions/InputError');
    server.ext('onPreResponse', function (request, h) {
         const response = request.response;
 
+        console.log(response.statusCode, response.code)
         if (response instanceof InputError) {
             // InputError ini berasal dari file InputError.js
             const newResponse = h.response({
                 status: 'fail',
-                message: `${response.message} Silakan gunakan foto lain.`
+                message: `${response.message}`
             })
             newResponse.code(response.statusCode)
             return newResponse;
@@ -60,7 +61,7 @@ const InputError = require('../exceptions/InputError');
                 status: 'fail',
                 message: response.message
             })
-            newResponse.code(response.statusCode)
+            newResponse.code(response.output.statusCode)
             return newResponse;
         }
 

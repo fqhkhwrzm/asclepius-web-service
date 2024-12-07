@@ -11,7 +11,9 @@ const routes = [
             payload: {
                 // Mengizinkan data berupa gambar
                 allow: 'multipart/form-data',
-                multipart: true
+                multipart: true,
+                // max 100000 atau 1 mb upload image nya
+                maxBytes: 1000 * 1000,
             }
         }
     }
